@@ -41,7 +41,10 @@ st.markdown(
 )
 
 # --- TITRE DE LA PAGE ---
-st.title("Étape 1️⃣ – Importation des données")
+st.markdown(
+    "<h1 style='color: #98FB98; font-size: 52px;'>Étape 1️⃣ – Importation des données.</h1>",
+    unsafe_allow_html=True
+)
 # Connexion à DuckDB (en mémoire)
 @st.cache_resource
 def init_db():
@@ -55,7 +58,10 @@ def init_db():
 con = init_db()
 
 # Aperçu des données
-st.subheader("📄 Données : Comportement d’achat")
+st.markdown(
+    "<h1 style='color: #C9E42F; font-size: 52px;'>📄 Données : Comportement d’achat.</h1>",
+    unsafe_allow_html=True
+)   
 df = con.execute("SELECT * FROM shopping LIMIT 10").df()
 st.dataframe(df, use_container_width=True)
 
