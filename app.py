@@ -2,27 +2,43 @@
 import streamlit as st
 import duckdb
 import plotly.express as px
+import base64
+import pandas as pd
+from PIL import Image
 
 # --- STYLISATION DE LA PAGE ---
 
 st.set_page_config(page_title="Shopdern - Dashboard", layout="centered")
-# CSS pour le fond
-# CSS avec bonne portée
-st.markdown("""
+
+# Chargement des images
+# --- Chargement du logo ---
+logo = Image.open("images/logo.png")
+st.image(logo, width=400)  # Affichage du logo
+
+# --- Fonction d'encodage base64 ---
+def get_base64_img(path):
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+
+# --- Encodage des images ---
+# --- Encodage du logo pour le fond ---
+img_base64 = get_base64_img("images/image1.png")
+
+# --- CSS : logo utilisé comme image de fond ---
+st.markdown(
+    f"""
     <style>
-        .stApp {
-            background-color: #98FB98;
-        }
-        h1, h2 {
-            color: #C9E42F
-        }
+    .stApp {{
+        background-image: url("data:image/png;base64,{img_base64}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
     </style>
-""", unsafe_allow_html=True)
-st.markdown("""
-    <h1 style='text-align: center; color: #1f77b4; font-size: 3em;'>
-        🛍️ <span style='color: #e15759;'>Shopdern</span> - Dashboard d’analyse
-    </h1>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
 
 # --- TITRE DE LA PAGE ---
 st.title("Étape 1️⃣ – Importation des données")
@@ -43,15 +59,8 @@ st.subheader("📄 Données : Comportement d’achat")
 df = con.execute("SELECT * FROM shopping LIMIT 10").df()
 st.dataframe(df, use_container_width=True)
 
-# Colonnes disponibles
-st.markdown("### 🧾 Colonnes disponibles")
-columns = con.execute("PRAGMA table_info('shopping')").fetchall()
-st.write([col[1] for col in columns])
-
 # app.py – Étape 2 : Nettoyage
-import streamlit as st
-import duckdb
-import pandas as pd
+
 
 gender_colors = {'Male': '#1f77b4', 'Female': '#ff7f0e'}
 st.set_page_config(page_title="Nettoyage des données", layout="wide")
