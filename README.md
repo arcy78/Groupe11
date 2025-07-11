@@ -27,9 +27,41 @@ Le dashboard permet d'explorer des indicateurs clés de performance (KPIs) tels 
 ---
 
 ## Structure du Projet
-(images/image.png)
+![Structure du Projet](images/kpi1.png)
 
 ## Aperçu du Dashboard
 ![KPI 1 - Ventes par Catégorie](images/kpi1.png)
 ![KPI 2 - Panier Moyen par Saison](images/kpi2.png)
-![KPI 2 - Panier Moyen par Saison](images/kpi2.png)
+![KPI 2 - Panier Moyen par Saison](images/kpi3.png)
+
+## Données Utilisées
+Le dashboard utilise le fichier shopping_behavior_updated.csv. Ce jeu de données, provenant de Kaggle, contient des informations détaillées sur le comportement d'achat des clients, incluant des attributs clients (genre, âge, localisation), des détails sur les articles achetés (catégorie, taille), les montants des achats, les méthodes de paiement, le statut d'abonnement et la fréquence des achats.
+
+## Analyse par KPIs
+Le dashboard met en lumière plusieurs Indicateurs Clés de Performance (KPIs) :
+
+1- Ventes totales par catégorie : Montre les revenus générés par chaque catégorie de produit.
+
+2- Panier moyen par saison : Révèle les variations du montant moyen dépensé selon les saisons.
+
+3- Top 10 régions avec le plus de clients : Identifie les zones géographiques avec la plus forte concentration de clients.
+
+4- Abonnés vs Non abonnés : Compare la proportion de clients ayant un statut d'abonnement.
+
+## Analyse Exploratoire
+Des onglets dédiés permettent une exploration plus approfondie des données :
+
+* Genre : Répartition des clients par genre et montant moyen d'achat associé.
+
+* Catégorie : Détail des articles achetés par catégorie de produit.
+
+* Taille & Couleur : Répartition des articles par taille.
+
+## Auteurs
+Ce projet a été réalisé par :
+
+* Wossan
+
+* Arnaud
+
+* Nelly
