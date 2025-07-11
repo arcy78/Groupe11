@@ -1,32 +1,26 @@
-# app.py – Shopdern Dashboard
 import streamlit as st
 import duckdb
-import plotly.express as px
-import base64
 import pandas as pd
+import matplotlib.pyplot as plt
 from PIL import Image
+import base64
+import plotly.express as px
 
-# --- CONFIGURATION ---
-st.set_page_config(page_title="Shopdern - Dashboard", layout="wide")
+# --- Configuration de la page ---
+st.set_page_config(page_title="Shopdern Dashboard", layout="centered")
 
-# --- STYLISATION DU TITRE PRINCIPAL ---
-st.markdown("""
-    <h1 style='text-align: center; color: #98FB98; font-size: 70px;'>
-        🛍️ Shopdern - Dashboard d’analyse
-    </h1>
-""", unsafe_allow_html=True)
-
-# --- Chargement des images ---
+# --- Chargement du logo (facultatif) ---
 logo = Image.open("images/logo.png")
-st.image(logo, width=400)
+st.image(logo, width=300)
 
+# --- Chargement de l'image de fond ---
 def get_base64_img(path):
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode()
 
 img_base64 = get_base64_img("images/image1.png")
 
-# --- Fond d'écran ---
+# --- STYLE global + fond d’écran ---
 st.markdown(
     f"""
     <style>
@@ -37,118 +31,136 @@ st.markdown(
         background-repeat: no-repeat;
         background-attachment: fixed;
     }}
+    h1, h2, h3, .stMarkdown {{
+        color: #b30059;
+    }}
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# --- FONCTION DE CENTRAGE DES GRAPHIQUES ---
-def center_chart(fig):
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.plotly_chart(fig, use_container_width=True)
+# --- Titre principal ---
+st.markdown("""
+    <h1 style='text-align: center; font-size: 3em;'>
+        🛍️ <span style='color:#e15759;'>Shopdern</span> - Dashboard d’analyse
+    </h1>
+""", unsafe_allow_html=True)
 
-# --- COULEURS POUR LES GENRES ---
-gender_colors = {'Male': '#C9E42F', 'Female': '#98FB98'}
-
-# --- ÉTAPE 1 : IMPORTATION DES DONNÉES ---
-st.markdown(
-    "<h1 style='text-align: center; color: #1A237E; font-size: 52px;'>Étape 1️⃣ – Importation des données.</h1>",
-    unsafe_allow_html=True
-)
-
-@st.cache_resource
-def init_db():
+# --- Chargement des données avec DuckDB ---
+@st.cache_data
+def load_data():
     con = duckdb.connect(database=':memory:')
     con.execute("""
-        CREATE TABLE shopping AS
-        SELECT * FROM read_csv_auto('data/shopping_behavior_updated.csv', header=True)
+        SELECT * FROM read_csv_auto('data/shopping_behavior_updated.csv', HEADER=TRUE)
     """)
-    return con
+    df = con.fetch_df()
+    return df
 
-con = init_db()
-df = con.execute("SELECT * FROM shopping LIMIT 10").df()
+df = load_data()
 
-st.markdown(
-    "<h2 style='text-align: center; color: #3E2723; font-size: 45px;'>📄 Données : Comportement d’achat.</h2>",
-    unsafe_allow_html=True
-)
-st.dataframe(df, use_container_width=True)
-
-# --- ÉTAPE 2 : NETTOYAGE DES DONNÉES ---
-st.markdown(
-    "<h1 style='text-align: center; color: #1A237E; font-size: 52px;'>Étape 2️⃣ – Nettoyage des colonnes et formatage</h1>",
-    unsafe_allow_html=True
-)
-
-df = con.execute("SELECT * FROM shopping").df()
-
+# --- Nettoyage des noms de colonnes
 df.rename(columns={
     "Customer ID": "Customer_ID",
-    "Item Purchased": "Item_Purchased",
     "Purchase Amount (USD)": "Purchase_Amount_USD",
-    "Review Rating": "Review_Rating",
-    "Subscription Status": "Subscription_Status",
-    "Payment Method": "Payment_Method",
-    "Shipping Type": "Shipping_Type",
-    "Discount Applied": "Discount_Applied",
-    "Promo Code Used": "Promo_Code_Used",
-    "Previous Purchases": "Previous_Purchases",
-    "Preferred Payment Method": "Preferred_Payment_Method",
-    "Frequency of Purchases": "Frequency_of_Purchases"
+    "Subscription Status": "Subscription_Status"
 }, inplace=True)
 
-df.drop_duplicates(inplace=True)
+# --- Filtres dynamiques ---
+st.markdown("## 🎛️ Filtres interactifs")
 
-st.markdown(
-    "<h2 style='text-align: center; color: #3E2723; font-size: 45px;'>📁 Types de données</h2>",
-    unsafe_allow_html=True
-)
-st.dataframe(df.dtypes.astype(str).reset_index().rename(columns={"index": "Colonne", 0: "Type"}))
+regions = df["Location"].dropna().unique().tolist()
+categories = df["Category"].dropna().unique().tolist()
 
-# --- ÉTAPE 3 : ANALYSE PAR KPI ---
-st.markdown(
-    "<h1 style='text-align: center; color: #1A237E; font-size: 52px;'>Étape 3️⃣ 📈 – Analyse par Indicateurs Clés (KPI) 📈</h1>",
-    unsafe_allow_html=True
-)
+selected_regions = st.multiselect("Filtrer par région :", sorted(regions), default=regions)
+selected_categories = st.multiselect("Filtrer par catégorie :", sorted(categories), default=categories)
 
-# KPI 1 : Transactions par catégorie et genre
-st.markdown("<h2 style='text-align: center; color: #3E2723; font-size: 45px;'> 🎯 Transactions par catégorie & genre 🎯</h2>", unsafe_allow_html=True)
-fig1 = px.histogram(df, x='Category', color='Gender', barmode='group', color_discrete_map=gender_colors)
-center_chart(fig1)
+df = df[df["Location"].isin(selected_regions) & df["Category"].isin(selected_categories)]
 
-# KPI 2 : Montant moyen par méthode de paiement
-st.markdown("<h2 style='text-align: center; color: #3E2723; font-size: 45px;'>💳 Montant moyen par méthode de paiement 💳</h2>", unsafe_allow_html=True)
-fig2 = px.box(df, x='Payment_Method', y='Purchase_Amount_USD', color='Gender', color_discrete_map=gender_colors)
-center_chart(fig2)
+if df.empty:
+    st.warning("Aucune donnée ne correspond aux filtres sélectionnés.")
+    st.stop()
 
-# KPI 3 : Statut d’abonnement selon le genre
-st.markdown("<h2 style='text-align: center; color: #3E2723; font-size: 45px;'>✉️ Abonnements par genre ✉️</h2>", unsafe_allow_html=True)
-fig3 = px.histogram(df, x='Subscription_Status', color='Gender', barmode='group', color_discrete_map=gender_colors)
-center_chart(fig3)
+# --- KPI ---
+st.markdown("## 🔍 Indicateurs clés de performance (KPI)")
 
-# KPI 4 : Répartition des évaluations (Review)
-st.markdown("<h2 style='text-align: center; color: #3E2723; font-size: 45px;'> ⭐️ Répartition des avis clients ⭐️</h2>", unsafe_allow_html=True)
-fig4 = px.histogram(df, x='Review_Rating', nbins=5, color='Gender', barmode='group', color_discrete_map=gender_colors)
-center_chart(fig4)
+# 1. Ventes par catégorie
+st.subheader("1. 💰 Ventes totales par catégorie")
+sales_by_category = df.groupby("Category")["Purchase_Amount_USD"].sum().sort_values(ascending=True)
+fig, ax = plt.subplots()
+colors = plt.get_cmap('Set3').colors
+ax.barh(sales_by_category.index, sales_by_category.values, color=colors[:len(sales_by_category)])
+for i, v in enumerate(sales_by_category.values):
+    ax.text(v + 1, i, f"${v:,.0f}", va='center')
+ax.set_xlabel("Montant total des ventes (USD)")
+ax.set_ylabel("Catégorie")
+st.pyplot(fig)
 
-# KPI 5 : Code promo utilisé (par genre)
-st.markdown("<h2 style='text-align: center; color: #3E2723; font-size: 45px;'>🏷️ Utilisation de codes promo 🏷️</h2>", unsafe_allow_html=True)
-fig5 = px.histogram(df, x='Promo_Code_Used', color='Gender', barmode='group', color_discrete_map=gender_colors)
-center_chart(fig5)
+# 2. Panier moyen par saison
+avg_basket = df.groupby("Season")["Purchase_Amount_USD"].mean().round(2).reset_index()
+fig = px.bar(avg_basket, x="Season", y="Purchase_Amount_USD",
+             text="Purchase_Amount_USD",
+             color="Season",
+             color_discrete_sequence=px.colors.qualitative.Pastel)
 
-# KPI 6 : Répartition des tailles
-st.markdown("<h2 style='text-align: center; color: #3E2723; font-size: 45px;'>👕 👗Répartition des tailles 👖</h2>", unsafe_allow_html=True)
-fig6 = px.histogram(df, x='Size', color='Gender', barmode='group', color_discrete_map=gender_colors)
-center_chart(fig6)
+fig.update_traces(texttemplate="$%{text:.2f}", textposition="outside")
+fig.update_layout(yaxis_title="Panier moyen (USD)", title="Panier moyen par saison")
+st.plotly_chart(fig, use_container_width=True)
 
-# KPI 7 : Fréquence des achats
-st.markdown("<h2 style='text-align: center; color: #3E2723; font-size: 45px;'>📊 🛒Fréquence des achats par genre 📈</h2>", unsafe_allow_html=True)
-fig7 = px.histogram(df, x='Frequency_of_Purchases', color='Gender', barmode='group', color_discrete_map=gender_colors)
-center_chart(fig7)
+# 3. Clients par région
+st.subheader("3. 🌍 Top 10 régions avec le plus de clients")
+top_regions = df.groupby("Location")["Customer_ID"].nunique().sort_values(ascending=False).head(10)
+fig, ax = plt.subplots()
+colors = plt.get_cmap('Paired').colors
+bars = ax.bar(top_regions.index, top_regions.values, color=colors[:len(top_regions)])
+for i, (region, count) in enumerate(top_regions.items()):
+    ax.text(i, count + 1, str(count), ha='center', va='bottom')
+ax.set_ylabel("Nombre de clients")
+ax.set_xlabel("Région")
+ax.set_xticklabels(top_regions.index, rotation=45, ha='right')
+st.pyplot(fig)
 
-# KPI 8 : Type de livraison préféré
-st.markdown("<h2 style='text-align: center; color: #3E2723; font-size: 45px;'>🚚 Types de livraison préférés 🚚</h2>", unsafe_allow_html=True)
-fig8 = px.histogram(df, x='Shipping_Type', color='Gender', barmode='group', color_discrete_map=gender_colors)
-center_chart(fig8)
+# 4. Abonnés vs non abonnés
+st.subheader("4. 📬 Abonnés vs Non abonnés")
+df["Subscription_Status"] = df["Subscription_Status"].map({True: "Abonnés", False: "Non Abonnés"})
+subscription_counts = df["Subscription_Status"].value_counts()
+fig, ax = plt.subplots()
+ax.pie(subscription_counts, labels=subscription_counts.index, autopct='%1.1f%%', startangle=90)
+ax.axis('equal')
+st.pyplot(fig)
 
+# --- Analyse exploratoire ---
+st.markdown("## 🔎 Analyse exploratoire")
+tab1, tab2, tab3 = st.tabs(["Genre", "Catégorie", "Taille & Couleur"])
+
+with tab1:
+    st.subheader("📊 Répartition par Genre")
+    genre_count = df['Gender'].value_counts().reset_index()
+    genre_count.columns = ['Gender', 'Count']
+    fig, ax = plt.subplots()
+    ax.bar(genre_count['Gender'], genre_count['Count'], color=plt.get_cmap('Set2').colors)
+    ax.set_title("Répartition par Genre")
+    ax.set_ylabel("Nombre de clients")
+    st.pyplot(fig)
+
+    st.subheader("💰 Montant moyen par Genre")
+    mean_price = df.groupby('Gender')['Purchase_Amount_USD'].mean().reset_index()
+    st.dataframe(mean_price)
+
+with tab2:
+    st.subheader("📦 Articles achetés par Catégorie")
+    cat_count = df['Category'].value_counts().reset_index()
+    cat_count.columns = ['Category', 'Count']
+    fig, ax = plt.subplots()
+    ax.bar(cat_count['Category'], cat_count['Count'], color=plt.get_cmap('tab10').colors)
+    ax.set_xticklabels(cat_count['Category'], rotation=45, ha='right')
+    ax.set_ylabel("Nombre d'articles")
+    st.pyplot(fig)
+
+with tab3:
+    st.subheader("🧵 Répartition des tailles")
+    size_dist = df['Size'].value_counts().reset_index()
+    size_dist.columns = ['Size', 'Count']
+    fig, ax = plt.subplots()
+    ax.bar(size_dist['Size'], size_dist['Count'], color=plt.get_cmap('Pastel1').colors)
+    ax.set_ylabel("Quantité")
+    st.pyplot(fig)
