@@ -57,11 +57,21 @@ Des onglets dédiés permettent une exploration plus approfondie des données :
 
 * Taille & Couleur : Répartition des articles par taille.
 
+NB: Les titres des graphiques n'ont pas la même police mais nous avons décidé de gareder ce visuel car ça ne changeait rien à l'ergonomie et à la lecture
+
 ## Auteurs
 Ce projet a été réalisé par :
 
 * Wossan
+Préparation des données (nettoyage, renommage de colonnes)
+Analyse exploratoire (genre, taille, catégorie)
 
 * Arnaud
+Création des KPI + visualisations (catégorie, saison, région…)
+Intégration finale + vérifications
 
 * Nelly
+Mise en place des filtres dynamiques dans Streamlit
+Personnalisation du fond, des couleurs et du style général (CSS)
+
+Tous les 3 ont contribué à README 
