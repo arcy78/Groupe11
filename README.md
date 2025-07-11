@@ -27,7 +27,25 @@ Le dashboard permet d'explorer des indicateurs clés de performance (KPIs) tels 
 ---
 
 ## Structure du Projet
-![Structure du Projet](images/kpi1.png)
+├── MYPROJET/                 # Dossier racine du projet
+│   ├── Groupe11/             # Votre dossier principal de travail
+│   │   ├── data/                 # Dossier contenant les jeux de données
+│   │   │   ├── shopping_behavior_updated.csv
+│   │   │   └── shopping_trends.csv
+│   │   ├── images/               # Dossier contenant les images clés (KPIs, logo)
+│   │   │   ├── kpi1.png          # Capture d'écran du KPI 1 pour le README
+│   │   │   ├── kpi2.png          # Capture d'écran du KPI 2 pour le README
+│   │   │   ├── kpi3.png          # Capture d'écran du KPI 3 pour le README
+│   │   │   └── logo.png          # Logo de l'application
+│   │   ├── venv/                 # Environnement virtuel Python (ignoré par Git)
+│   │   │   ├── Include/
+│   │   │   ├── Lib/
+│   │   │   └── Scripts/
+│   │   ├── .gitignore            # Fichier pour spécifier les fichiers/dossiers à ignorer par Git
+│   │   ├── pyvenv.cfg            # Fichier de configuration de l'environnement virtuel
+│   │   ├── app.py                # Script principal de l'application Streamlit
+│   │   └── requirements.txt      # Liste des dépendances Python du projet
+│   └── README.md                 # Le fichier de documentation de votre projet (ce fichier)
 
 ## Aperçu du Dashboard
 ![KPI 1 - Ventes par Catégorie](images/kpi1.png)
