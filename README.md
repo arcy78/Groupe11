@@ -29,8 +29,7 @@ Le dashboard permet d'explorer des indicateurs clés de performance (KPIs) tels 
 ## Structure du Projet
 (images/image.png)
 
-Aperçu du Dashboard
-
-(images/kpi1.png)
-(images/kpi2.png)
-(images/kpi3.png)
+## Aperçu du Dashboard
+![KPI 1 - Ventes par Catégorie](images/kpi1.png)
+![KPI 2 - Panier Moyen par Saison](images/kpi2.png)
+![KPI 2 - Panier Moyen par Saison](images/kpi2.png)
