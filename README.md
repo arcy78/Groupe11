@@ -27,30 +27,12 @@ Le dashboard permet d'explorer des indicateurs clés de performance (KPIs) tels 
 ---
 
 ## Structure du Projet
-├── MYPROJET/                 # Dossier racine du projet
-│   ├── Groupe11/             # Votre dossier principal de travail
-│   │   ├── data/                 # Dossier contenant les jeux de données
-│   │   │   ├── shopping_behavior_updated.csv
-│   │   │   └── shopping_trends.csv
-│   │   ├── images/               # Dossier contenant les images clés (KPIs, logo)
-│   │   │   ├── kpi1.png          # Capture d'écran du KPI 1 pour le README
-│   │   │   ├── kpi2.png          # Capture d'écran du KPI 2 pour le README
-│   │   │   ├── kpi3.png          # Capture d'écran du KPI 3 pour le README
-│   │   │   └── logo.png          # Logo de l'application
-│   │   ├── venv/                 # Environnement virtuel Python (ignoré par Git)
-│   │   │   ├── Include/
-│   │   │   ├── Lib/
-│   │   │   └── Scripts/
-│   │   ├── .gitignore            # Fichier pour spécifier les fichiers/dossiers à ignorer par Git
-│   │   ├── pyvenv.cfg            # Fichier de configuration de l'environnement virtuel
-│   │   ├── app.py                # Script principal de l'application Streamlit
-│   │   └── requirements.txt      # Liste des dépendances Python du projet
-│   └── README.md                 # Le fichier de documentation de votre projet (ce fichier)
+![KStructure du Projet](images/image.png)
 
 ## Aperçu du Dashboard
-![KPI 1 - Ventes par Catégorie](images/kpi1.png)
-![KPI 2 - Panier Moyen par Saison](images/kpi2.png)
-![KPI 2 - Panier Moyen par Saison](images/kpi3.png)
+![Indicateurs clés de performance (KPI)](images/kpi1.png)
+![KIndicateurs clés de performance (KPI)](images/kpi2.png)
+![KIndicateurs clés de performance (KPI)](images/kpi3.png)
 
 ## Données Utilisées
 Le dashboard utilise le fichier shopping_behavior_updated.csv. Ce jeu de données, provenant de Kaggle, contient des informations détaillées sur le comportement d'achat des clients, incluant des attributs clients (genre, âge, localisation), des détails sur les articles achetés (catégorie, taille), les montants des achats, les méthodes de paiement, le statut d'abonnement et la fréquence des achats.
