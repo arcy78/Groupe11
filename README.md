@@ -27,5 +27,10 @@ Le dashboard permet d'explorer des indicateurs clés de performance (KPIs) tels 
 ---
 
 ## Structure du Projet
-![alt text](image.png)
+[# Structure du Projet](images/image.png)
 
+Aperçu du Dashboard
+
+[# Structure du Projet](images/kpi1.png)
+[# Structure du Projet](images/kpi2.png)
+[# Structure du Projet](images/kpi3.png)
